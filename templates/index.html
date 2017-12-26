@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="caption">Currently Online</div>
+        <ul id="list">
+
+        </ul>
+    </div>
+    <div class="col-sm-4">
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+        $(function () {
+            // Correctly decide between ws:// and wss://
+            var ws_path = "/chat/stream/";
+            console.log("Connecting to " + ws_path);
+
+            var webSocketBridge = new channels.WebSocketBridge();
+            webSocketBridge.connect(ws_path);
+
+            // Handle incoming messages
+            webSocketBridge.listen(function(data) {
+                // Decode the JSON
+                console.log("Got websocket message", data);
+                if(data['command'] == 'join'){
+                    console.log("Joined", data);
+                    add_list(data['username']);
+                    webSocketBridge.send({
+                            "command": "joined",
+                            "username": '{{ user }}'
+                    });
+                }
+                else if(data['command'] == 'joined'){
+                    console.log("Joined", data);
+                    add_list(data['username']);
+                }
+                // Handle errors
+            });
+
+            // Says if we joined a room or not by if there's a div for it
+
+            // Helpful debugging
+            webSocketBridge.socket.onopen = function () {
+                console.log("Connected to chat socket");
+                webSocketBridge.send({
+                        "command": "join",
+                        "username": '{{ user }}'
+                });
+                console.log("Sent");
+            };
+
+            webSocketBridge.socket.onclose = function () {
+                console.log("Disconnected from chat socket");
+            }
+        });
+    function add_list(username) {
+        console.log("out",username);
+        var wrk = $("ul li a").map(function () {
+            return $(this).text()
+        }).get();
+        wrk.push('{{ user }}');
+        if($.inArray(username, wrk) > -1){}
+        else {
+            var list = document.getElementById("list");
+            var li = document.createElement("li");
+            var link = document.createElement("a");
+            li.id = username;
+            link.href = "/"+username;
+            link.innerText = username;
+            li.appendChild(link);
+            list.appendChild(li);
+        }
+    }
+</script>
+{% endblock %}

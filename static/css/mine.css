@@ -1,0 +1,41 @@
+.messages{
+    background: white;
+    padding: 10px 10px 0 10px;
+    border-radius: 2px;
+    box-shadow: 0 4px 4px rgba(0, 0, 255, 0.5);
+    max-width:100%;
+    margin-left: 5%;
+    margin-right: 20%;
+}
+
+.msg_sent{
+    padding-bottom:30px !important;
+    margin-right:0;
+    margin-top: 2%;
+    margin-bottom: 3%;
+    width: 80%;
+}
+
+.msg_receive{
+    padding-left: 10px;
+    margin-left:20%;
+    margin-top: 2%;
+    margin-bottom: 3%;
+    width: 80%;
+}
+
+.panel-body{
+    background: cadetblue;
+    height: 300px;
+    margin: 0 0 0 0;
+    padding: 0 10px 10px;
+    max-height:300px;
+    overflow-x:hidden;
+}
+
+.msg_sent > time{
+    float: right;
+}
+time{
+    color: gray;
+}

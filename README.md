@@ -9,4 +9,4 @@ It's simple.
 
 If you have any question.
 Just send me a message.
-Email: dapwill@gmail.com <dapwill (at) gmail (dot) com>
+Email: dapwill@gmail.com

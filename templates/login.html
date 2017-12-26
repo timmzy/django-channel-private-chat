@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Login or Signup{% endblock %}
+
+{% block content %}
+    {% if status == 1 %}
+        <div class="alert alert-info">Username already exists</div>
+    {% elif status == 2 %}
+        <div class="alert alert-info">Username does not exists, Please Sign Up</div>
+    {% endif %}
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+            <div class="panel-heading">
+                Login
+            </div>
+            <div class="panel-body">
+                <form role="form" class="form-horizontal" method="post">{% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Username: </label>
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" name="username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Password: </label>
+                        <div class="col-sm-6">
+                            <input class="form-control" type="password" name="password">
+                        </div>
+                    </div>
+                    <div class="col-sm-4"></div><input name="log" class="btn btn-success" value="Login" type="submit">
+                </form>
+            </div>
+        </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Sign Up
+                </div>
+                <div class="panel-body">
+                    <form role="form" class="form-horizontal" method="post">{% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Username: </label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" name="username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Password: </label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="password" name="password">
+                            </div>
+                        </div>
+                        <div class="col-sm-4"></div><input class="btn btn-success" value="Sign Up" type="submit" name="sign">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+
+{% endblock %}

@@ -1,0 +1,9 @@
+.scale{
+    display: inline-flex;
+}
+.numbers{
+    width: 5px;
+    height: 40px;
+    background-color: green;
+    margin-right: 2px;
+}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="caption">Currently Online</div>
+        <ul id="list">
+
+        </ul>
+    </div>
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">You are chatting with <b>{{ username }}</b></div>
+            </div>
+            <div class="panel-body">
+            </div>
+
+           <div class="panel-footer">
+               <div class="input-group">
+                   <input id="btn-input" type="text" class="form-control input-sm chat_input" placeholder="Write your message here..." />
+                   <span class="input-group-btn">
+                       <button class="btn btn-primary btn-sm" id="btn-chat">Send</button>
+                   </span>
+               </div>
+           </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+        $(function () {
+            // Correctly decide between ws:// and wss://
+            var ws_path = "/chat/stream/";
+            console.log("Connecting to " + ws_path);
+
+            var webSocketBridge = new channels.WebSocketBridge();
+            webSocketBridge.connect(ws_path);
+
+            // Handle incoming messages
+            webSocketBridge.listen(function(data) {
+                // Decode the JSON
+                console.log("Got websocket message", data);
+                if(data['command'] == 'join'){
+                    add_list(data['username']);
+                    webSocketBridge.send({
+                            "command": "joined",
+                            "username": '{{ user }}'
+                    });
+                }
+                else if(data['command'] == 'joined'){
+                    add_list(data['username']);
+                }
+                else if(data['message'] && data['send_from'] == '{{ username }}'){
+                    receive_msg(data['message'], '{{ username }}')
+                }
+                // Handle errors
+            });
+
+            $(document).on('click', '#btn-chat', function (e) {
+                output = $("#btn-input");
+                if(output.val()){
+                    webSocketBridge.send({
+                        "command": "send",
+                        "send_to": '{{ username }}',
+                        "send_from": '{{ user }}',
+                        "message": output.val().trim()
+                    });
+                    send_msg(output.val().trim(), '{{ user }}');
+                    output.val("");
+                }
+            });
+            $(document).on('keyup', "#btn-input", function (e) {
+                if (e.keyCode == 13){
+                    $("#btn-chat").click();
+                }
+            });
+
+            // Says if we joined a room or not by if there's a div for it
+
+            // Helpful debugging
+            webSocketBridge.socket.onopen = function () {
+                console.log("Connected to chat socket");
+                webSocketBridge.send({
+                        "command": "join",
+                        "username": '{{ user }}'
+                });
+            };
+
+            webSocketBridge.socket.onclose = function () {
+                console.log("Disconnected from chat socket");
+            }
+        });
+    function add_list(username) {
+        var wrk = $("ul li a").map(function () {
+            return $(this).text()
+        }).get();
+        wrk.push('{{ user }}');
+        if($.inArray(username, wrk) > -1){}
+        else {
+            var list = document.getElementById("list");
+            var li = document.createElement("li");
+            var link = document.createElement("a");
+            li.id = username;
+            link.href = "/"+username;
+            link.innerText = username;
+            li.appendChild(link);
+            list.appendChild(li);
+        }
+    }
+</script>
+{% endblock %}
